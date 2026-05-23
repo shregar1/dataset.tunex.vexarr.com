@@ -87,3 +87,21 @@ fn mmap_jsonl_dataset_reports_malformed_json_with_source_line() {
 
     fs::remove_file(path).expect("fixture should remove");
 }
+
+#[test]
+fn mmap_jsonl_dataset_falls_back_to_owned_text_for_escaped_strings() {
+    let path = fixture_path("escaped");
+    fs::write(&path, "{\"text\":\"hello\\nworld\"}\n").expect("fixture should write");
+
+    let dataset = MmapJsonlDataset::open(&path).expect("mmap dataset should open");
+    let line = dataset.line(0).expect("line should exist");
+    let record = dataset.record(0).expect("record should parse");
+    let line_start = line.bytes.as_ptr() as usize;
+    let line_end = line_start + line.bytes.len();
+    let text_start = record.text.as_ptr() as usize;
+
+    assert_eq!(record.text.as_ref(), b"hello\nworld");
+    assert!(!(line_start..line_end).contains(&text_start));
+
+    fs::remove_file(path).expect("fixture should remove");
+}

@@ -44,6 +44,9 @@ pub enum DatasetError {
         /// Indexed dataset length.
         len: usize,
     },
+    /// Parallel pipeline failed.
+    #[error("dataset pipeline failed: {0}")]
+    Pipeline(String),
     /// The selected compression format is not supported for this reader.
     #[error("unsupported compression format: {0:?}")]
     UnsupportedCompression(crate::config::CompressionKind),

@@ -9,6 +9,7 @@ pub mod config;
 pub mod error;
 pub mod jsonl;
 pub mod mmap;
+pub mod pipeline;
 pub mod plugin;
 pub mod reader;
 
@@ -19,5 +20,6 @@ pub use jsonl::{
     DecodedJsonlRecord, DecodedText, FastPathJsonlParser, JsonlDataset, JsonlDatasetSource,
     JsonlParser, JsonlRecord, LineIndex, LineSlice, LineSpan, MmapJsonlDataset, SimdJsonlParser,
 };
+pub use pipeline::{ParallelJsonlPipeline, PipelineOptions, PipelineStats, SampleBatch};
 pub use plugin::DatasetPlugin;
 pub use reader::{DatasetReader, StreamingJsonlReader};

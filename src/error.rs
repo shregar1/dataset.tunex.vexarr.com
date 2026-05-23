@@ -28,6 +28,14 @@ pub enum DatasetError {
         /// Parser message.
         message: String,
     },
+    /// JSONL row is missing a string text field.
+    #[error("JSONL record at line {line} is missing string field `{field}`")]
+    MissingText {
+        /// One-based line number.
+        line: u64,
+        /// Required text field.
+        field: String,
+    },
     /// The selected compression format is not supported for this reader.
     #[error("unsupported compression format: {0:?}")]
     UnsupportedCompression(crate::config::CompressionKind),

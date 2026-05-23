@@ -40,8 +40,12 @@ pub struct JsonlDatasetConfig {
     pub compression: CompressionKind,
     /// Optional JSON field used as `RawSample.id`.
     pub id_field: Option<String>,
+    /// JSON field used as `RawSample` payload text.
+    pub text_field: String,
     /// Whether each record should be parsed as JSON before emission.
     pub validate_json: bool,
+    /// Optional maximum number of samples to emit.
+    pub max_samples: Option<usize>,
 }
 
 impl JsonlDatasetConfig {
@@ -62,7 +66,9 @@ impl Default for JsonlDatasetConfig {
             mode: DatasetMode::Stream,
             compression: CompressionKind::None,
             id_field: Some("id".to_owned()),
+            text_field: "text".to_owned(),
             validate_json: true,
+            max_samples: None,
         }
     }
 }

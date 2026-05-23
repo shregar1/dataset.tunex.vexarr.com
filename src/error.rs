@@ -36,6 +36,14 @@ pub enum DatasetError {
         /// Required text field.
         field: String,
     },
+    /// Requested record index is outside the dataset.
+    #[error("JSONL record index {index} is out of bounds for length {len}")]
+    IndexOutOfBounds {
+        /// Requested record index.
+        index: usize,
+        /// Indexed dataset length.
+        len: usize,
+    },
     /// The selected compression format is not supported for this reader.
     #[error("unsupported compression format: {0:?}")]
     UnsupportedCompression(crate::config::CompressionKind),

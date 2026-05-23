@@ -139,7 +139,7 @@ impl DatasetSource for JsonlDatasetSource {
     }
 }
 
-fn record_to_sample(record: JsonlRecord) -> RawSample {
+pub(crate) fn record_to_sample(record: JsonlRecord) -> RawSample {
     match record.id {
         Some(id) => RawSample::with_id(id, record.text),
         None => RawSample::new(record.text),

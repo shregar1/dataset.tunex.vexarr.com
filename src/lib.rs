@@ -14,6 +14,9 @@ pub mod reader;
 
 pub use config::{CompressionKind, DatasetMode, JsonlDatasetConfig};
 pub use error::{DatasetError, DatasetResult};
-pub use jsonl::{JsonlDataset, JsonlDatasetSource, JsonlParser, JsonlRecord};
+pub use jsonl::{
+    JsonlDataset, JsonlDatasetSource, JsonlParser, JsonlRecord, LineIndex, LineSlice, LineSpan,
+    MmapJsonlDataset,
+};
 pub use plugin::DatasetPlugin;
 pub use reader::{DatasetReader, StreamingJsonlReader};

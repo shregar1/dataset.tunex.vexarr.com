@@ -12,6 +12,7 @@ pub mod mmap;
 pub mod plugin;
 pub mod reader;
 
+pub use compression::{CompressionFormat, CompressionStats, DatasetInputReader};
 pub use config::{CompressionKind, DatasetMode, JsonlDatasetConfig};
 pub use error::{DatasetError, DatasetResult};
 pub use jsonl::{

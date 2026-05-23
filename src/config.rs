@@ -19,6 +19,8 @@ pub enum DatasetMode {
 #[derive(Clone, Copy, Debug, Default, Deserialize, Eq, PartialEq, Serialize)]
 #[serde(rename_all = "snake_case")]
 pub enum CompressionKind {
+    /// Detect compression from the path extension.
+    Auto,
     /// No compression.
     #[default]
     None,
@@ -64,7 +66,7 @@ impl Default for JsonlDatasetConfig {
         Self {
             path: PathBuf::new(),
             mode: DatasetMode::Stream,
-            compression: CompressionKind::None,
+            compression: CompressionKind::Auto,
             id_field: Some("id".to_owned()),
             text_field: "text".to_owned(),
             validate_json: true,

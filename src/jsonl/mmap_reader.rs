@@ -9,7 +9,7 @@ use bytes::Bytes;
 use memmap2::{Mmap, MmapOptions};
 use tunex_core::types::RawSample;
 
-use crate::{DatasetError, DatasetResult, JsonlDatasetConfig};
+use crate::{compression::CompressionFormat, DatasetError, DatasetResult, JsonlDatasetConfig};
 
 use super::{
     line_index::LineIndex, reader::record_to_sample, slice::LineSlice, JsonlParser, JsonlRecord,
@@ -54,6 +54,10 @@ impl MmapJsonlDataset {
             return Err(DatasetError::InvalidConfig(
                 "dataset path must not be empty".to_owned(),
             ));
+        }
+        let format = CompressionFormat::resolve(&config.path, config.compression);
+        if !format.supports_mmap() {
+            return Err(DatasetError::UnsupportedCompression(config.compression));
         }
 
         let file =

@@ -1,7 +1,6 @@
 //! Buffered JSONL dataset source.
 
 use std::{
-    fs::File,
     io::{BufRead, BufReader},
     path::Path,
     sync::Mutex,
@@ -10,14 +9,15 @@ use std::{
 use async_trait::async_trait;
 use tunex_core::{traits::DatasetSource, types::RawSample, TunexResult};
 
-use crate::{DatasetError, DatasetResult, JsonlDatasetConfig};
+use crate::{compression::DatasetInputReader, DatasetError, DatasetResult, JsonlDatasetConfig};
 
 use super::{JsonlParser, JsonlRecord};
 
 /// Simple buffered JSONL dataset reader.
 pub struct JsonlDataset {
     path: std::path::PathBuf,
-    reader: BufReader<File>,
+    reader: BufReader<DatasetInputReader>,
+    compression_stats: crate::CompressionStats,
     parser: JsonlParser,
     line: u64,
     emitted: usize,
@@ -47,11 +47,12 @@ impl JsonlDataset {
             ));
         }
 
-        let file =
-            File::open(&config.path).map_err(|error| DatasetError::io(&config.path, error))?;
+        let input = DatasetInputReader::open(&config.path, config.compression)?;
+        let compression_stats = input.stats();
         Ok(Self {
             path: config.path.clone(),
-            reader: BufReader::new(file),
+            reader: BufReader::new(input),
+            compression_stats,
             parser: JsonlParser::new(&config),
             line: 0,
             emitted: 0,
@@ -71,6 +72,12 @@ impl JsonlDataset {
         };
 
         Ok(Some(record_to_sample(record)))
+    }
+
+    /// Returns compression stats observed when the reader was opened.
+    #[must_use]
+    pub const fn compression_stats(&self) -> crate::CompressionStats {
+        self.compression_stats
     }
 
     /// Returns the next parsed JSONL record, or `None` when exhausted.

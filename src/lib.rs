@@ -10,6 +10,7 @@ pub mod config;
 pub mod distributed;
 pub mod error;
 pub mod filter;
+pub mod index;
 pub mod jsonl;
 pub mod metrics;
 pub mod mmap;
@@ -37,6 +38,11 @@ pub use error::{DatasetError, DatasetResult};
 pub use filter::{
     DatasetFilter, DatasetFilterConfig, DedupeFilter, FilterDecision, FilterEngine, FilterReason,
     FilterStats, LanguageFilter, LengthFilter, PiiFilter, RegexFilter,
+};
+pub use index::{
+    CacheMetadata, CompressionMetadata, DatasetFingerprint, DatasetIdentity, DatasetManifest,
+    DatasetManifestRegistry, DatasetStatistics, FingerprintBuilder, ManifestBuilder,
+    SchemaMetadata, ShardMetadata, SplitMetadata, StatisticsBuilder,
 };
 pub use jsonl::{
     DecodedJsonlRecord, DecodedText, FastPathJsonlParser, JsonlDataset, JsonlDatasetSource,

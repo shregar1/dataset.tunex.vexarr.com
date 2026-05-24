@@ -47,6 +47,12 @@ pub enum DatasetError {
     /// Parallel pipeline failed.
     #[error("dataset pipeline failed: {0}")]
     Pipeline(String),
+    /// Arrow batch construction or projection failed.
+    #[error("arrow dataset operation failed: {0}")]
+    Arrow(String),
+    /// Parquet file reading failed.
+    #[error("parquet dataset operation failed: {0}")]
+    Parquet(String),
     /// The selected compression format is not supported for this reader.
     #[error("unsupported compression format: {0:?}")]
     UnsupportedCompression(crate::config::CompressionKind),

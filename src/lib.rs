@@ -10,6 +10,7 @@ pub mod config;
 pub mod error;
 pub mod jsonl;
 pub mod mmap;
+pub mod parquet;
 pub mod pipeline;
 pub mod plugin;
 pub mod reader;
@@ -28,6 +29,10 @@ pub use error::{DatasetError, DatasetResult};
 pub use jsonl::{
     DecodedJsonlRecord, DecodedText, FastPathJsonlParser, JsonlDataset, JsonlDatasetSource,
     JsonlParser, JsonlRecord, LineIndex, LineSlice, LineSpan, MmapJsonlDataset, SimdJsonlParser,
+};
+pub use parquet::{
+    ArrowDatasetBatch, ParquetDatasetOptions, ParquetDatasetReader, ParquetProjection,
+    ParquetTextSchema,
 };
 pub use pipeline::{ParallelJsonlPipeline, PipelineOptions, PipelineStats, SampleBatch};
 pub use plugin::{DatasetPlugin, DATASET_PLUGIN_NAME, DATASET_PLUGIN_VERSION};

@@ -4,11 +4,13 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+arrow = "58.3.0"
 async-trait = "0.1.89"
 bytes = "1.11.1"
 crossbeam-channel = "0.5.15"
 lz4_flex = "0.13.1"
 memmap2 = "0.9.10"
+parquet = "58.3.0"
 rand = "0.10.1"
 rand_chacha = "0.10.0"
 rayon = "1.12.0"

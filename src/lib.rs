@@ -7,6 +7,7 @@
 pub mod batch;
 pub mod compression;
 pub mod config;
+pub mod distributed;
 pub mod error;
 pub mod jsonl;
 pub mod metrics;
@@ -25,6 +26,10 @@ pub use compression::{CompressionFormat, CompressionStats, DatasetInputReader};
 pub use config::{
     CompressionKind, ConfigValidationError, ConfigValidationReport, DatasetFormat, DatasetMode,
     DatasetPipelineConfig, JsonlDatasetConfig, ValidateDatasetConfig,
+};
+pub use distributed::{
+    DatasetShard, DistributedBatchOwnership, DistributedEpoch, DistributedRank, PartitionStrategy,
+    ShardAssignment, ShardCursor, WeightedPartition,
 };
 pub use error::{DatasetError, DatasetResult};
 pub use jsonl::{

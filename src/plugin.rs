@@ -5,6 +5,12 @@ use tunex_core::plugin::{
     PluginVersion, TunexPlugin,
 };
 
+/// Stable TuneX dataset plugin name.
+pub const DATASET_PLUGIN_NAME: &str = "tunex-dataset-jsonl";
+
+/// Stable TuneX dataset plugin version.
+pub const DATASET_PLUGIN_VERSION: PluginVersion = PluginVersion::new(0, 1, 0);
+
 /// Dataset plugin metadata provider.
 #[derive(Clone, Debug)]
 pub struct DatasetPlugin {
@@ -17,11 +23,15 @@ impl DatasetPlugin {
     pub fn new() -> Self {
         Self {
             capabilities: vec![
-                PluginCapability::new("dataset:jsonl"),
-                PluginCapability::new("dataset:stream"),
-                PluginCapability::new("dataset:mmap"),
-                PluginCapability::new("compression:zstd"),
-                PluginCapability::new("compression:lz4"),
+                PluginCapability::new("jsonl"),
+                PluginCapability::new("streaming"),
+                PluginCapability::new("mmap"),
+                PluginCapability::new("simd-json"),
+                PluginCapability::new("zstd"),
+                PluginCapability::new("lz4"),
+                PluginCapability::new("parallel-read"),
+                PluginCapability::new("bounded-queues"),
+                PluginCapability::new("estimated-throughput:750-mib-s"),
             ],
         }
     }
@@ -36,9 +46,9 @@ impl Default for DatasetPlugin {
 impl TunexPlugin for DatasetPlugin {
     fn metadata(&self) -> PluginMetadata {
         PluginMetadata::new(
-            PluginId::new("tunex-dataset-jsonl"),
-            PluginName::new("TuneX JSONL Dataset"),
-            PluginVersion::new(0, 1, 0),
+            PluginId::new(DATASET_PLUGIN_NAME),
+            PluginName::new(DATASET_PLUGIN_NAME),
+            DATASET_PLUGIN_VERSION,
             PluginKind::Dataset,
             self.capabilities.clone(),
         )

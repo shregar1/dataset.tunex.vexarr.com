@@ -12,6 +12,7 @@ pub mod mmap;
 pub mod pipeline;
 pub mod plugin;
 pub mod reader;
+pub mod source;
 
 pub use compression::{CompressionFormat, CompressionStats, DatasetInputReader};
 pub use config::{CompressionKind, DatasetMode, JsonlDatasetConfig};
@@ -21,5 +22,6 @@ pub use jsonl::{
     JsonlParser, JsonlRecord, LineIndex, LineSlice, LineSpan, MmapJsonlDataset, SimdJsonlParser,
 };
 pub use pipeline::{ParallelJsonlPipeline, PipelineOptions, PipelineStats, SampleBatch};
-pub use plugin::DatasetPlugin;
+pub use plugin::{DatasetPlugin, DATASET_PLUGIN_NAME, DATASET_PLUGIN_VERSION};
 pub use reader::{DatasetReader, StreamingJsonlReader};
+pub use source::TunexDatasetSource;

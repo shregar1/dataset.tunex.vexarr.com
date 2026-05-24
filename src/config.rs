@@ -59,6 +59,20 @@ impl JsonlDatasetConfig {
             ..Self::default()
         }
     }
+
+    /// Uses memory mapping when the input is uncompressed.
+    #[must_use]
+    pub const fn with_mmap(mut self) -> Self {
+        self.mode = DatasetMode::Mmap;
+        self
+    }
+
+    /// Sets the maximum number of samples to emit.
+    #[must_use]
+    pub const fn with_max_samples(mut self, max_samples: usize) -> Self {
+        self.max_samples = Some(max_samples);
+        self
+    }
 }
 
 impl Default for JsonlDatasetConfig {

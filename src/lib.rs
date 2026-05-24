@@ -13,6 +13,7 @@ pub mod mmap;
 pub mod pipeline;
 pub mod plugin;
 pub mod reader;
+pub mod sampling;
 pub mod source;
 
 pub use batch::{
@@ -31,4 +32,7 @@ pub use jsonl::{
 pub use pipeline::{ParallelJsonlPipeline, PipelineOptions, PipelineStats, SampleBatch};
 pub use plugin::{DatasetPlugin, DATASET_PLUGIN_NAME, DATASET_PLUGIN_VERSION};
 pub use reader::{DatasetReader, StreamingJsonlReader};
+pub use sampling::{
+    ReservoirSampler, SamplingPlan, SamplingSeed, SamplingStrategy, ShardSpec, WeightedSampler,
+};
 pub use source::TunexDatasetSource;

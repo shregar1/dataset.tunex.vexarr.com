@@ -40,3 +40,31 @@ harness = false
 [[bench]]
 name = "batching"
 harness = false
+
+[[bench]]
+name = "mmap_read"
+harness = false
+
+[[bench]]
+name = "simd_parse"
+harness = false
+
+[[bench]]
+name = "compression"
+harness = false
+
+[[bench]]
+name = "shuffle"
+harness = false
+
+[[bench]]
+name = "cache"
+harness = false
+
+[[bench]]
+name = "distributed"
+harness = false
+
+[[bench]]
+name = "end_to_end"
+harness = false

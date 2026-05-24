@@ -4,6 +4,7 @@
 //! streaming or memory-mapped readers and emitted as `tunex-core` `RawSample`
 //! values through the `DatasetSource` contract.
 
+pub mod batch;
 pub mod compression;
 pub mod config;
 pub mod error;
@@ -14,6 +15,9 @@ pub mod plugin;
 pub mod reader;
 pub mod source;
 
+pub use batch::{
+    BatchBuilder, BatchMetadata, BatchSampler, BatchStats, DatasetBatch, PrefetchBatches,
+};
 pub use compression::{CompressionFormat, CompressionStats, DatasetInputReader};
 pub use config::{
     CompressionKind, ConfigValidationError, ConfigValidationReport, DatasetFormat, DatasetMode,

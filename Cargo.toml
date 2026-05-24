@@ -2,6 +2,9 @@
 name = "tunex-dataset"
 version = "0.1.0"
 edition = "2021"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/shregar1/dataset.tunex.vexarr.com"
+description = "High-performance Rust dataset loading engine for TuneX with mmap, zero-copy parsing, SIMD JSON, streaming, and compression support"
 
 [dependencies]
 arrow = "58.3.0"

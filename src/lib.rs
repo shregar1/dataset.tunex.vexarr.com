@@ -17,6 +17,7 @@ pub mod mmap;
 pub mod parquet;
 pub mod pipeline;
 pub mod plugin;
+pub mod prelude;
 pub mod reader;
 pub mod resume;
 pub mod sampling;
@@ -67,3 +68,12 @@ pub use sampling::{
     ReservoirSampler, SamplingPlan, SamplingSeed, SamplingStrategy, ShardSpec, WeightedSampler,
 };
 pub use source::TunexDatasetSource;
+
+/// Default dataset configuration type for the JSONL v0.1 backend.
+pub type DatasetConfig = JsonlDatasetConfig;
+/// Public Parquet dataset reader alias.
+pub type ParquetDataset = ParquetDatasetReader;
+/// Public filter rule trait alias.
+pub use filter::DatasetFilter as FilterRule;
+/// Public TuneX dataset plugin alias.
+pub type TunexDatasetPlugin = DatasetPlugin;

@@ -10,8 +10,9 @@ use async_trait::async_trait;
 use tunex_core::{traits::DatasetSource, types::RawSample, TunexResult};
 
 use crate::{
-    compression::DatasetInputReader, DatasetError, DatasetResult, JsonlDatasetConfig,
-    ValidateDatasetConfig,
+    batch::{BatchBuilder, DatasetBatch},
+    compression::DatasetInputReader,
+    DatasetError, DatasetResult, JsonlDatasetConfig, ValidateDatasetConfig,
 };
 
 use super::{JsonlParser, JsonlRecord};
@@ -25,6 +26,7 @@ pub struct JsonlDataset {
     line: u64,
     emitted: usize,
     max_samples: Option<usize>,
+    batch_size: usize,
     buffer: Vec<u8>,
 }
 
@@ -56,8 +58,18 @@ impl JsonlDataset {
             line: 0,
             emitted: 0,
             max_samples: config.max_samples,
+            batch_size: config.pipeline.batch_size,
             buffer: Vec::new(),
         })
+    }
+
+    /// Opens a JSONL dataset from explicit config.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error when config is invalid or the file cannot be opened.
+    pub fn from_config(config: JsonlDatasetConfig) -> DatasetResult<Self> {
+        Self::open_config(config)
     }
 
     /// Returns the next raw sample, or `None` when exhausted.
@@ -71,6 +83,23 @@ impl JsonlDataset {
         };
 
         Ok(Some(record_to_sample(record)))
+    }
+
+    /// Returns the next configured-size dataset batch.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error when reading or parsing fails.
+    pub fn next_batch(&mut self) -> DatasetResult<Option<DatasetBatch>> {
+        let mut builder = BatchBuilder::with_capacity(self.batch_size);
+        while builder.len() < self.batch_size {
+            let Some(sample) = self.next_sample()? else {
+                break;
+            };
+            builder.push(sample);
+        }
+
+        Ok(builder.finish())
     }
 
     /// Returns compression stats observed when the reader was opened.

@@ -7,7 +7,7 @@ use tunex_core::{traits::DatasetSource, types::RawSample, TunexResult};
 
 use crate::{
     compression::CompressionFormat, DatasetResult, JsonlDataset, JsonlDatasetConfig,
-    MmapJsonlDataset,
+    MmapJsonlDataset, ValidateDatasetConfig,
 };
 
 enum SourceInner {
@@ -34,8 +34,9 @@ impl TunexDatasetSource {
     ///
     /// Returns an error when the configured source cannot be opened.
     pub fn open(config: JsonlDatasetConfig) -> DatasetResult<Self> {
+        validate_config(&config)?;
         let format = CompressionFormat::resolve(&config.path, config.compression);
-        if config.mode == crate::DatasetMode::Mmap && format.supports_mmap() {
+        if (config.mode == crate::DatasetMode::Mmap || config.mmap) && format.supports_mmap() {
             return Ok(Self {
                 inner: SourceInner::Mmap {
                     dataset: MmapJsonlDataset::open_config(config)?,
@@ -48,6 +49,21 @@ impl TunexDatasetSource {
             inner: SourceInner::Stream(Mutex::new(JsonlDataset::open_config(config)?)),
         })
     }
+}
+
+fn validate_config(config: &JsonlDatasetConfig) -> DatasetResult<()> {
+    let report = config.validate();
+    if report.is_valid() {
+        return Ok(());
+    }
+
+    let message = report
+        .errors
+        .into_iter()
+        .map(|error| format!("{}: {}", error.path, error.message))
+        .collect::<Vec<_>>()
+        .join("; ");
+    Err(crate::DatasetError::InvalidConfig(message))
 }
 
 #[async_trait]

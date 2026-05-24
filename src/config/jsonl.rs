@@ -1,8 +1,19 @@
-//! Dataset loader configuration.
+//! JSONL dataset configuration.
 
 use std::path::PathBuf;
 
 use serde::{Deserialize, Serialize};
+
+use super::{CompressionKind, DatasetPipelineConfig};
+
+/// Dataset input format.
+#[derive(Clone, Copy, Debug, Default, Deserialize, Eq, PartialEq, Serialize)]
+#[serde(rename_all = "snake_case")]
+pub enum DatasetFormat {
+    /// JSON Lines.
+    #[default]
+    Jsonl,
+}
 
 /// Dataset read mode.
 #[derive(Clone, Copy, Debug, Default, Deserialize, Eq, PartialEq, Serialize)]
@@ -15,29 +26,20 @@ pub enum DatasetMode {
     Mmap,
 }
 
-/// Supported compression formats.
-#[derive(Clone, Copy, Debug, Default, Deserialize, Eq, PartialEq, Serialize)]
-#[serde(rename_all = "snake_case")]
-pub enum CompressionKind {
-    /// Detect compression from the path extension.
-    Auto,
-    /// No compression.
-    #[default]
-    None,
-    /// Zstandard frame compression.
-    Zstd,
-    /// LZ4 frame compression.
-    Lz4,
-}
-
 /// JSONL dataset source configuration.
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[serde(default)]
 pub struct JsonlDatasetConfig {
     /// Dataset path.
     pub path: PathBuf,
+    /// Dataset format.
+    pub format: DatasetFormat,
     /// Reader mode.
     pub mode: DatasetMode,
+    /// Whether memory mapping is enabled.
+    pub mmap: bool,
+    /// Whether SIMD JSON parsing is enabled.
+    pub simd_json: bool,
     /// Compression format.
     pub compression: CompressionKind,
     /// Optional JSON field used as `RawSample.id`.
@@ -48,6 +50,8 @@ pub struct JsonlDatasetConfig {
     pub validate_json: bool,
     /// Optional maximum number of samples to emit.
     pub max_samples: Option<usize>,
+    /// Pipeline options.
+    pub pipeline: DatasetPipelineConfig,
 }
 
 impl JsonlDatasetConfig {
@@ -64,6 +68,7 @@ impl JsonlDatasetConfig {
     #[must_use]
     pub const fn with_mmap(mut self) -> Self {
         self.mode = DatasetMode::Mmap;
+        self.mmap = true;
         self
     }
 
@@ -79,12 +84,16 @@ impl Default for JsonlDatasetConfig {
     fn default() -> Self {
         Self {
             path: PathBuf::new(),
+            format: DatasetFormat::Jsonl,
             mode: DatasetMode::Stream,
+            mmap: false,
+            simd_json: true,
             compression: CompressionKind::Auto,
             id_field: Some("id".to_owned()),
             text_field: "text".to_owned(),
             validate_json: true,
             max_samples: None,
+            pipeline: DatasetPipelineConfig::default(),
         }
     }
 }

@@ -15,7 +15,10 @@ pub mod reader;
 pub mod source;
 
 pub use compression::{CompressionFormat, CompressionStats, DatasetInputReader};
-pub use config::{CompressionKind, DatasetMode, JsonlDatasetConfig};
+pub use config::{
+    CompressionKind, ConfigValidationError, ConfigValidationReport, DatasetFormat, DatasetMode,
+    DatasetPipelineConfig, JsonlDatasetConfig, ValidateDatasetConfig,
+};
 pub use error::{DatasetError, DatasetResult};
 pub use jsonl::{
     DecodedJsonlRecord, DecodedText, FastPathJsonlParser, JsonlDataset, JsonlDatasetSource,

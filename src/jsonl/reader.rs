@@ -9,7 +9,10 @@ use std::{
 use async_trait::async_trait;
 use tunex_core::{traits::DatasetSource, types::RawSample, TunexResult};
 
-use crate::{compression::DatasetInputReader, DatasetError, DatasetResult, JsonlDatasetConfig};
+use crate::{
+    compression::DatasetInputReader, DatasetError, DatasetResult, JsonlDatasetConfig,
+    ValidateDatasetConfig,
+};
 
 use super::{JsonlParser, JsonlRecord};
 
@@ -41,11 +44,7 @@ impl JsonlDataset {
     ///
     /// Returns an error when config is invalid or the file cannot be opened.
     pub fn open_config(config: JsonlDatasetConfig) -> DatasetResult<Self> {
-        if config.path.as_os_str().is_empty() {
-            return Err(DatasetError::InvalidConfig(
-                "dataset path must not be empty".to_owned(),
-            ));
-        }
+        validate_config(&config)?;
 
         let input = DatasetInputReader::open(&config.path, config.compression)?;
         let compression_stats = input.stats();
@@ -111,6 +110,21 @@ impl JsonlDataset {
             return Ok(Some(record));
         }
     }
+}
+
+fn validate_config(config: &JsonlDatasetConfig) -> DatasetResult<()> {
+    let report = config.validate();
+    if report.is_valid() {
+        return Ok(());
+    }
+
+    let message = report
+        .errors
+        .into_iter()
+        .map(|error| format!("{}: {}", error.path, error.message))
+        .collect::<Vec<_>>()
+        .join("; ");
+    Err(DatasetError::InvalidConfig(message))
 }
 
 /// Core-compatible JSONL dataset source.

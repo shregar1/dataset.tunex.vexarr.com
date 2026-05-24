@@ -9,7 +9,10 @@ use bytes::Bytes;
 use memmap2::{Mmap, MmapOptions};
 use tunex_core::types::RawSample;
 
-use crate::{compression::CompressionFormat, DatasetError, DatasetResult, JsonlDatasetConfig};
+use crate::{
+    compression::CompressionFormat, DatasetError, DatasetResult, JsonlDatasetConfig,
+    ValidateDatasetConfig,
+};
 
 use super::{
     line_index::LineIndex, reader::record_to_sample, slice::LineSlice, JsonlParser, JsonlRecord,
@@ -50,11 +53,7 @@ impl MmapJsonlDataset {
     ///
     /// Returns an error when config is invalid or the file cannot be mapped.
     pub fn open_config(config: JsonlDatasetConfig) -> DatasetResult<Self> {
-        if config.path.as_os_str().is_empty() {
-            return Err(DatasetError::InvalidConfig(
-                "dataset path must not be empty".to_owned(),
-            ));
-        }
+        validate_config(&config)?;
         let format = CompressionFormat::resolve(&config.path, config.compression);
         if !format.supports_mmap() {
             return Err(DatasetError::UnsupportedCompression(config.compression));
@@ -145,4 +144,19 @@ impl MmapJsonlDataset {
     pub fn get(&self, index: usize) -> DatasetResult<RawSample> {
         self.record(index).map(record_to_sample)
     }
+}
+
+fn validate_config(config: &JsonlDatasetConfig) -> DatasetResult<()> {
+    let report = config.validate();
+    if report.is_valid() {
+        return Ok(());
+    }
+
+    let message = report
+        .errors
+        .into_iter()
+        .map(|error| format!("{}: {}", error.path, error.message))
+        .collect::<Vec<_>>()
+        .join("; ");
+    Err(DatasetError::InvalidConfig(message))
 }

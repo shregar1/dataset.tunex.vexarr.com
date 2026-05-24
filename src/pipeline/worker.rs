@@ -19,7 +19,7 @@ use crate::{
         queue::{send_with_backpressure, BoundedQueue},
         scheduler::{ChunkScheduler, PipelineOptions},
     },
-    DatasetError, DatasetResult, JsonlDatasetConfig,
+    DatasetError, DatasetResult, JsonlDatasetConfig, ValidateDatasetConfig,
 };
 
 type ChunkMessage = DatasetResult<LineChunk>;
@@ -52,11 +52,7 @@ impl ParallelJsonlPipeline {
     ///
     /// Returns an error when config is invalid.
     pub fn open(config: JsonlDatasetConfig, options: PipelineOptions) -> DatasetResult<Self> {
-        if config.path.as_os_str().is_empty() {
-            return Err(DatasetError::InvalidConfig(
-                "dataset path must not be empty".to_owned(),
-            ));
-        }
+        validate_config(&config)?;
         if options.chunk_lines == 0
             || options.chunk_queue_capacity == 0
             || options.batch_queue_capacity == 0
@@ -114,6 +110,21 @@ impl ParallelJsonlPipeline {
             queue_stall_time: reader.queue_stall_time + parser.queue_stall_time,
         })
     }
+}
+
+fn validate_config(config: &JsonlDatasetConfig) -> DatasetResult<()> {
+    let report = config.validate();
+    if report.is_valid() {
+        return Ok(());
+    }
+
+    let message = report
+        .errors
+        .into_iter()
+        .map(|error| format!("{}: {}", error.path, error.message))
+        .collect::<Vec<_>>()
+        .join("; ");
+    Err(DatasetError::InvalidConfig(message))
 }
 
 impl Drop for ParallelJsonlPipeline {

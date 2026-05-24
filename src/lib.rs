@@ -9,6 +9,7 @@ pub mod compression;
 pub mod config;
 pub mod error;
 pub mod jsonl;
+pub mod metrics;
 pub mod mmap;
 pub mod parquet;
 pub mod pipeline;
@@ -29,6 +30,10 @@ pub use error::{DatasetError, DatasetResult};
 pub use jsonl::{
     DecodedJsonlRecord, DecodedText, FastPathJsonlParser, JsonlDataset, JsonlDatasetSource,
     JsonlParser, JsonlRecord, LineIndex, LineSlice, LineSpan, MmapJsonlDataset, SimdJsonlParser,
+};
+pub use metrics::{
+    DatasetCounters, DatasetLatency, DatasetMetricsExporter, DatasetMetricsSnapshot, LatencyTimer,
+    NoopMetricsExporter, ThroughputMeter, ThroughputSnapshot,
 };
 pub use parquet::{
     ArrowDatasetBatch, ParquetDatasetOptions, ParquetDatasetReader, ParquetProjection,

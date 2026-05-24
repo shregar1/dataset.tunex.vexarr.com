@@ -5,6 +5,7 @@ use std::path::PathBuf;
 use serde::{Deserialize, Serialize};
 
 use super::{CompressionKind, DatasetPipelineConfig};
+use crate::filter::DatasetFilterConfig;
 
 /// Dataset input format.
 #[derive(Clone, Copy, Debug, Default, Deserialize, Eq, PartialEq, Serialize)]
@@ -52,6 +53,8 @@ pub struct JsonlDatasetConfig {
     pub max_samples: Option<usize>,
     /// Pipeline options.
     pub pipeline: DatasetPipelineConfig,
+    /// Dataset quality filters.
+    pub filters: DatasetFilterConfig,
 }
 
 impl JsonlDatasetConfig {
@@ -94,6 +97,7 @@ impl Default for JsonlDatasetConfig {
             validate_json: true,
             max_samples: None,
             pipeline: DatasetPipelineConfig::default(),
+            filters: DatasetFilterConfig::default(),
         }
     }
 }

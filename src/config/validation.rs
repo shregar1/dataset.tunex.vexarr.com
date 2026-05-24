@@ -75,8 +75,27 @@ impl ValidateDatasetConfig for JsonlDatasetConfig {
             self.compression,
             self.mmap || self.mode == DatasetMode::Mmap,
         );
+        validate_filters(&mut report, self);
 
         report
+    }
+}
+
+fn validate_filters(report: &mut ConfigValidationReport, config: &JsonlDatasetConfig) {
+    if let (Some(min_chars), Some(max_chars)) = (config.filters.min_chars, config.filters.max_chars)
+    {
+        if min_chars > max_chars {
+            report.push("filters.min_chars", "min_chars must be <= max_chars");
+        }
+    }
+
+    for pattern in &config.filters.reject_patterns {
+        if let Err(error) = regex::Regex::new(pattern) {
+            report.push(
+                "filters.reject_patterns",
+                format!("invalid regex `{pattern}`: {error}"),
+            );
+        }
     }
 }
 

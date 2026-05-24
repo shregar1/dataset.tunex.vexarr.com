@@ -1741,6 +1741,7 @@ dependencies = [
  "rand",
  "rand_chacha",
  "rayon",
+ "regex",
  "serde",
  "serde_json",
  "simd-json",

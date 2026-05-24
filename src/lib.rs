@@ -9,6 +9,7 @@ pub mod compression;
 pub mod config;
 pub mod distributed;
 pub mod error;
+pub mod filter;
 pub mod jsonl;
 pub mod metrics;
 pub mod mmap;
@@ -33,6 +34,10 @@ pub use distributed::{
     ShardAssignment, ShardCursor, WeightedPartition,
 };
 pub use error::{DatasetError, DatasetResult};
+pub use filter::{
+    DatasetFilter, DatasetFilterConfig, DedupeFilter, FilterDecision, FilterEngine, FilterReason,
+    FilterStats, LanguageFilter, LengthFilter, PiiFilter, RegexFilter,
+};
 pub use jsonl::{
     DecodedJsonlRecord, DecodedText, FastPathJsonlParser, JsonlDataset, JsonlDatasetSource,
     JsonlParser, JsonlRecord, LineIndex, LineSlice, LineSpan, MmapJsonlDataset, SimdJsonlParser,
